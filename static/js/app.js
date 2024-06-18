@@ -14,6 +14,7 @@ document.querySelector('#dark-mode-toggle').addEventListener('click', () => {
 // screens
 const start_screen = document.querySelector('#start-screen');
 const game_screen = document.querySelector('#game-screen');
+const pause_screen = document.querySelector('#pause-screen');
 // -----------------
 const cells = document.querySelectorAll('.main-grid-cell');
 
@@ -27,6 +28,13 @@ const game_time = document.querySelector('#game-time');
 
 let level_index = 0;
 let level = CONSTANT.LEVEL[level_index];
+
+let timer = null; 
+let pause = false;
+let seconds = 0;
+
+let su = undefined;
+let su_answer = undefined;
 
 // -----------
 
@@ -52,12 +60,72 @@ const initGameGrid = () => {
 const setPlayerName = (name) => localStorage.setItem('player_name', name);
 const getPlayerName = () => localStorage.getItem('player_name');
 
+const showTime = (seconds) => new Date(seconds * 1000).toISOString().substr(11, 8);
+
+const clearSudoku = () => {
+    for (let i = 0; i < Math.pow(CONSTANT.GRID_SIZE, 2); i++) {
+        cells[i].innerHTML = '';
+        cells[i].classList.remove('filled');
+        cells[i].classList.remove('selected');
+    }
+}
+
+const initSudoku = () => {
+    // clear old sudoku
+    clearSudoku();
+
+
+    // generate sudoku puzzle here
+    su = sudokuGen(level);
+    su_answer = [...su.question];
+
+    console.table(su_answer);
+
+    // show sudoku to div
+    for (let i = 0; i < Math.pow(CONSTANT.GRID_SIZE, 2); i++) {
+        let row = Math.floor(i/ CONSTANT.GRID_SIZE);
+        let col = i % CONSTANT.GRID_SIZE;
+
+        cells[i].setAttribute('data-value', su.question[row][col]);
+
+        if (su.question[row][col] !== 0) {
+            cells[i].classList.add('filled');
+            cells[i].innerHTML = su.question[row][col];
+        }
+        
+    }
+}
+
 const startGame = () => {
     start_screen.classList.remove('active');
-    game_screen.classList.add('adtive');
-}
-// add button event
+    game_screen.classList.add('active');
 
+    player_name.innerHTML = name_input.value.trim();
+    setPlayerName(name_input.value.trim());
+
+    game_level.innerHTML = CONSTANT.LEVEL_NAME[level_index];
+
+    seconds = 0;
+    showTime(seconds);
+
+    timer = setInterval(() => {
+        if (!pause) {
+            seconds = seconds + 1;
+            game_time.innerHTML = showTime(seconds);
+        }
+    }, 1000);
+}
+
+const returnStartScreen = () => {
+    clearInterval(timer);
+    pause = false;
+    seconds = 0;
+    start_screen.classList.add('active');
+    game_screen.classList.remove('active');
+    pause_screen.classList.remove('active');
+}
+
+// add button event
 document.querySelector('#btn-level').addEventListener('click', (e) => {
     level_index = level_index + 1 > CONSTANT.LEVEL.length - 1 ? 0 : level_index + 1;
     level = CONSTANT[level_index];
@@ -66,6 +134,7 @@ document.querySelector('#btn-level').addEventListener('click', (e) => {
 
 document.querySelector('#btn-play').addEventListener('click', () => {
     if (name_input.value.trim().length > 0) {
+        initSudoku();
         startGame();
     } else {
         name_input.classList.add('input-err');
@@ -76,6 +145,19 @@ document.querySelector('#btn-play').addEventListener('click', () => {
     }
 });
 
+document.querySelector('#btn-pause').addEventListener('click', () => {
+    pause_screen.classList.add('active');
+    pause = true;
+});
+
+document.querySelector('#btn-resume').addEventListener('click', () => {
+    pause_screen.classList.remove('active');
+    pause = false;
+});
+
+document.querySelector('#btn-new-game').addEventListener('click', () => {
+    returnStartScreen();
+});
 // --------------
 
 const init = () => {
@@ -89,6 +171,12 @@ const init = () => {
     document.querySelector('#btn-continue').style.display = game ? 'grid' : 'none';
 
     initGameGrid();
+
+    if (getPlayerName()) {
+        name_input.value = getPlayerName();
+    } else {
+        name_input.focus();
+    }
 }
 
 init();
