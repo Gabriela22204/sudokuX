@@ -15,7 +15,7 @@ const newGrid = (size) => {
 // check duplicate number in col
 const isColSafe = (grid, col, value) => {
     for (let row = 0; row < CONSTANT.GRID_SIZE; row++) {
-        if (grid [row][col] === value) return false;
+        if (grid[row][col] === value) return false;
     }
     return true;
 }
@@ -23,7 +23,7 @@ const isColSafe = (grid, col, value) => {
 // check duplicate number in row
 const isRowSafe = (grid, row, value) => {
     for (let col = 0; col < CONSTANT.GRID_SIZE; col++) {
-        if (grid [row][col] === value) return false;
+        if (grid[row][col] === value) return false;
     }
     return true;
 }
@@ -133,12 +133,12 @@ const sudokuCheck = (grid) => {
                     return true;
                 } else {
                     if (sudokuCreate(grid)) {
-                        return false;
+                        return true;
                     }
                 }
             }
-        })
-    })
+        });
+    });
 
     return isFullGrid(grid);
 }
@@ -175,3 +175,4 @@ const sudokuGen = (level) => {
     }
     return undefined;
 }
+// 1:33 video

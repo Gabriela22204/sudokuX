@@ -4,7 +4,7 @@ const CONSTANT = {
     BOX_SIZE: 3, 
     NUMBERS: [1,2,3,4,5,6,7,8,9],
     LEVEL_NAME: [
-        'EASY',
+        'Easy',
         'Medium',
         'Hard',
         'Very hard',
