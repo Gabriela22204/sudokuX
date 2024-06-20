@@ -327,9 +327,16 @@ nav {
 .delete {
     background-color: var(--red);
     color: var(--white);
+    height: var(--sudoku-cell-size);
+    border-radius: var(--border-radius);
+    display: grid;
+    place-items: center;
+    font-size: var(--font-size);
+    cursor: pointer;
 }
 
-.pause-screen {
+.pause-screen,
+.result-screen {
     position: absolute;
     top: 0;
     left: 0;
@@ -342,16 +349,37 @@ nav {
     display:none;
 }
 
-.pause-screen.active {
+.pause-screen.active,
+.result-screen.active {
     display: flex;
 }
 
-.pause-screen > * + * {
+.pause-screen > * + *,
+.result-screen > * + * {
     margin-top: 20px;
+}
+
+.result-screen.active div {
+    animation: zoom-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .pause-screen.active .btn {
     animation: zoom-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.result-screen .congrata {
+    font-size: var(--font-size-xl);
+    color: var(--blue);
+}
+
+.result-screen .info {
+    color: var(--color-txt);
+    font-size: var(--font-size);
+}
+
+#result-time {
+    color: var(--blue);
+    font-size: var(--font-size-xl);
 }
 
 .zoom-in {
@@ -384,5 +412,40 @@ nav {
     }
     100% {
         transform: scale(1);
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    :root {
+        --nav-size: 50px;
+
+        --sudoku-cell-size: 30px;
+
+        --border-radius: 5px;
+
+        --space-y: 10px;
+
+        --gap: 2px;
+
+        --font-size: 1rem;
+        --font-size-lg: 1.5rem;
+        --font-size-xl: 2rem;
+    }
+
+    .input-name, 
+    .btn {
+        height: 50px;
+    }
+
+    .main-grid-cell.hover {
+        border-width: 2px;
+    }
+
+    .screen {
+        min-width: unset;
+    }
+
+    .main {
+        height: 100vh;
     }
 }
